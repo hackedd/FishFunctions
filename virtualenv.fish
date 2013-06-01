@@ -12,7 +12,7 @@ function virtualenv --description "Create virtualenv with colored prompt"
 			set prompt (basename (pwd))
 		else
 			set prompt $argv[-1]
-			set -e $argv[-1]
+			set -e argv[-1]
 		end
 		virtualenv $argv --prompt (set_color -b blue white)"($prompt)"(set_color normal)" "
 	end
