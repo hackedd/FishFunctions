@@ -14,6 +14,10 @@ function virtualenv --description "Create virtualenv with colored prompt"
 			set prompt $argv[-1]
 			set -e argv[-1]
 		end
-		virtualenv $argv --prompt (set_color -b blue white)"($prompt)"(set_color normal)" "
+		command virtualenv $argv --prompt (set_color -b blue white)"($prompt)"(set_color normal)" "
+		if test -f requirements.txt
+			activate
+			pip install -r requirements.txt
+		end
 	end
 end
