@@ -1,8 +1,12 @@
 function vagrant
+    if test -z "$TMPDIR";
+        set TMPDIR "/tmp"
+    end
+
     set -l cache $TMPDIR/vagrant-up-cache
 
     # Run 'vagrant up' by default, unless arguments are given
-    set -l args up
+    set args up
     if test (count $argv) -ge 1
         set args $argv
     end
@@ -23,8 +27,8 @@ function vagrant
     # Ask for a directory and run vagrant there
     if selecta < $cache | read dir
         echo "Running "(set_color --bold)"vagrant $args"(set_color normal)" in $HOME/$dir" >&2
-        pushd "$HOME/$dir" >-
-        vagrant $args
-        popd >-
+        pushd "$HOME/$dir" >/dev/null
+        command vagrant $args
+        popd >/dev/null
     end
 end
