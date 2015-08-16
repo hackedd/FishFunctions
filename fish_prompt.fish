@@ -27,7 +27,7 @@ function fish_prompt --description 'Write out the prompt'
     end
 
     # Show last execution time, if it took more than five seconds
-    if test $CMD_DURATION -gt 5000
+    if test -n "$CMD_DURATION" -a "$CMD_DURATION" -gt 5000
         echo
         echo -n -s (set_color --bold) "$history[1]" (set_color normal)
         echo -n -s " took: " (set_color red) (format_duration $CMD_DURATION) (set_color normal)
