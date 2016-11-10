@@ -1,6 +1,8 @@
 function activate --description "Activate virtualenv if it exists"
   if test -e "env/bin/activate.fish"
     . "env/bin/activate.fish"
+  else if test -e "venv/bin/activate.fish"
+    . "venv/bin/activate.fish"
   else
     echo "No virtualenv in ./env" >&2
     return 1
