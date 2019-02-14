@@ -7,23 +7,24 @@ function which --description "which, but with more info"
                 echo -n "$arg: " >&2
             end
             echo "not found" >&2
-        else
-            if test $count -gt 1
-                echo -n "$arg: "
-            end
-            echo "$path"
+            return 1
+        end
 
-            while test -L "$path"
-                # Get the target of the link
-                set -l target (readlink "$path")
+        if test $count -gt 1
+            echo -n "$arg: "
+        end
+        echo "$path"
 
-                # Resolve the link target relative to the directory of the link
-                pushd (dirname "$path") 2>/dev/null
-                set -l path (realpath -s "$target")
-                popd 2>/dev/null
+        while test -L "$path"
+            # Get the target of the link
+            set -l target (readlink "$path")
 
-                echo " -> $path"
-            end
+            # Resolve the link target relative to the directory of the link
+            pushd (dirname "$path") 2>/dev/null
+            set path (realpath "$target")
+            popd 2>/dev/null
+
+            echo " -> $path"
         end
     end
     return 0
