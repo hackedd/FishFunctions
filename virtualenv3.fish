@@ -4,6 +4,6 @@ function virtualenv3 --description "Create Python 3 virtualenv with colored prom
         return 1
     end
 
-    virtualenv --python (command which python3.5) $argv
+    virtualenv --python (command which python3) $argv
     return $status
 end
