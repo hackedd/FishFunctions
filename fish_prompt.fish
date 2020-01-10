@@ -1,22 +1,3 @@
-function format_duration
-    set -l seconds (math $argv[1] / 1000)
-    set -l format
-    if test $seconds -gt 3600
-        set format "+%-Hh %-Mm %-Ss"
-    else if test $seconds -gt 60
-        set format "+%-Mm %-Ss"
-    else
-        set format "+%-Ss"
-    end
-
-    set -l date date
-    if [ (uname) = "Darwin" ]
-        set date gdate
-    end
-
-    eval "$date -u -d \"@$seconds\" \"$format\""
-end
-
 function fish_prompt --description 'Write out the prompt'
     # Save the last exit status before doing anything else
     set -l last_status $status
@@ -45,7 +26,7 @@ function fish_prompt --description 'Write out the prompt'
     # Show git branch
     set -l branch
     if set -l git_branch (git rev-parse --abbrev-ref HEAD 2>/dev/null)
-        set branch " "(set_color cyan)"$git_branch"(set_color normal)
+        set branch " "(set_color cyan)"$git_branch"
     else
         set branch ""
     end
@@ -65,5 +46,9 @@ function fish_prompt --description 'Write out the prompt'
         set suffix '>'
     end
 
-    echo -n -s "$USER" @ "$__fish_prompt_hostname" ' ' (set_color $color_cwd) (prompt_pwd) (set_color normal) "$branch" "$suffix "
+    echo -n -s "$USER" @ "$__fish_prompt_hostname" ' ' \
+        (set_color $color_cwd) (prompt_pwd) \
+        (set_color brblue) (__kube_prompt) \
+        "$branch" \
+        (set_color normal) "$suffix "
 end
