@@ -21,7 +21,7 @@ function which --description "which, but with more info"
 
             # Resolve the link target relative to the directory of the link
             pushd (dirname "$path") 2>/dev/null
-            set path (realpath "$target")
+            set path (realpath --no-symlinks "$target")
             popd 2>/dev/null
 
             echo " -> $path"
