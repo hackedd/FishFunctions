@@ -1,4 +1,4 @@
-function open-all-urls --argument-names input
+function open-all-tickets --argument-names input
     if test -z "$input"
     	set dirname (mktemp -d)
     	set fifo $dirname/fifo
@@ -7,9 +7,8 @@ function open-all-urls --argument-names input
     	set input $fifo
     end
 
-    rg --only-matching 'https?://[\S]+' $input | while read url
-        echo $url >&2
-        open $url
+    rg --only-matching --ignore-case 'REC[ -]\d+' $input | while read ticket
+        echo "https://digib-brenntag.atlassian.net/browse/"(echo $ticket | tr ' ' '-')
     end
 
     if test -n "$fifo"
