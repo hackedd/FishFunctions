@@ -1,53 +1,37 @@
 function fish_prompt --description 'Write out the prompt'
     # Save the last exit status before doing anything else
-    set -l last_status $status
+    set -l last_pipestatus $pipestatus
+    set -lx __fish_last_status $status # Export for __fish_print_pipestatus.
 
-    # Just calculate this once, to save a few cycles when displaying the prompt
-    if not set -q __fish_prompt_hostname
-        set -g __fish_prompt_hostname (hostname|cut -d . -f 1)
+    set -q fish_color_status; or set -g fish_color_status --background=red white
+
+    # Color the prompt differently when we're root
+    set -l color_cwd $fish_color_cwd
+    set -l suffix '>'
+    if functions -q fish_is_root_user; and fish_is_root_user
+        if set -q fish_color_cwd_root
+            set color_cwd $fish_color_cwd_root
+        end
+        set suffix '#'
     end
+
+    # If the status was carried over (if no command is issued or if `set` leaves the status untouched), don't bold it.
+    set -l bold_flag --bold
+    set -q __fish_prompt_status_generation; or set -g __fish_prompt_status_generation $status_generation
+    if test $__fish_prompt_status_generation = $status_generation
+        set bold_flag
+    end
+    set __fish_prompt_status_generation $status_generation
+
+    set -l normal (set_color normal)
+    set -l status_color (set_color $fish_color_status)
+    set -l statusb_color (set_color $bold_flag $fish_color_status)
+    set -l prompt_status (__fish_print_pipestatus "[" "]" "|" "$status_color" "$statusb_color" $last_pipestatus)
 
     # Show last execution time, if it took more than five seconds
     if test -n "$CMD_DURATION" -a "$CMD_DURATION" -gt 5000
-        echo
-        echo -n -s (set_color --bold) "$history[1]" (set_color normal)
-        echo -n -s " took: " (set_color red) (format_duration $CMD_DURATION) (set_color normal)
-        if test $last_status -ne 0
-            echo -n -s " status: " (set_color --bold) "$last_status" (set_color normal)
-        end
-        echo
-    else if test $last_status -ne 0
-        echo
-        echo -n -s (set_color --bold) "$history[1]" (set_color normal)
-        echo -n -s " status: " (set_color --bold) "$last_status" (set_color normal)
-        echo
+        echo -s (set_color --bold) $history[1] $normal " took: " (set_color --bold red) (format_duration $CMD_DURATION) $normal
     end
 
-    # Show git branch
-    set -l branch
-    if set -l git_branch (git rev-parse --abbrev-ref HEAD 2>/dev/null)
-        set branch " "(set_color cyan)"$git_branch"
-    else
-        set branch ""
-    end
-
-    set -l color_cwd
-    set -l suffix
-    switch $USER
-    case root toor
-        if set -q fish_color_cwd_root
-            set color_cwd $fish_color_cwd_root
-        else
-            set color_cwd $fish_color_cwd
-        end
-        set suffix '#'
-    case '*'
-        set color_cwd $fish_color_cwd
-        set suffix '>'
-    end
-
-    echo -n -s "$USER" @ "$__fish_prompt_hostname" ' ' \
-        (set_color $color_cwd) (prompt_pwd) \
-        "$branch" \
-        (set_color normal) "$suffix "
+    echo -n -s (prompt_login)' ' (set_color $color_cwd) (prompt_pwd) $normal (fish_vcs_prompt) $normal " "$prompt_status $suffix " "
 end
