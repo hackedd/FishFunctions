@@ -48,7 +48,6 @@ function fish_prompt --description 'Write out the prompt'
 
     echo -n -s "$USER" @ "$__fish_prompt_hostname" ' ' \
         (set_color $color_cwd) (prompt_pwd) \
-        (set_color brblue) (__kube_prompt) \
         "$branch" \
         (set_color normal) "$suffix "
 end

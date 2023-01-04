@@ -1,3 +1,0 @@
-[submodule "fish-kube-prompt"]
-	path = fish-kube-prompt
-	url = https://github.com/aluxian/fish-kube-prompt
