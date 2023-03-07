@@ -1,6 +1,6 @@
 function fish_title
-    if set -q SSH_CLIENT
-        echo -n -s '[' "$__fish_prompt_hostname" '] '
+    if set -q SSH_TTY
+        echo -n -s '[' (prompt_hostname) '] '
     end
     echo -n -s $_ ' ' (prompt_pwd)
 end
